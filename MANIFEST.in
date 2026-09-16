@@ -1,1 +1,7 @@
 include README.rst LICENSE
+include pytest.ini requirements.txt
+
+# Ship the whole test suite, not the half distutils picks up by default:
+# without the fixtures and conftest, the tests in the sdist cannot run.
+recursive-include tests *.py
+recursive-include tests/fixtures *.json

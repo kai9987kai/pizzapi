@@ -1,16 +1,14 @@
-.. pizzapi documentation master file, created by
-   sphinx-quickstart on Sun Feb  4 22:05:18 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to pizzapi's documentation!
+Welcome to pizzapy's documentation!
 ===================================
+
+pizzapy is a Python wrapper for the Domino's Pizza API. See the README for a
+quick start; this is the reference for every public class and function.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
+   api
 
 Indices and tables
 ==================

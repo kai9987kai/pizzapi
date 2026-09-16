@@ -1,5 +1,10 @@
+# Everything needed to work on pizzapy, runtime and tests together.
+# Installing the library itself only pulls in requests and xmltodict
+# (see install_requires in setup.py).
 requests
-pyhamcrest
 xmltodict
-pytest
+
+# Tests only.
 mock
+pyhamcrest
+pytest

@@ -13,6 +13,7 @@ Note: To use the 'upload' functionality of this file, you must:
 """
 from __future__ import print_function
 import io
+import re
 import sys
 from os import path, system
 from shutil import rmtree
@@ -25,6 +26,11 @@ here = path.abspath(path.dirname(__file__))
 # Import the README.rst and use it as the long-description.
 with io.open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = '\n' + f.read()
+
+# Single-source the version from the package, without importing it (importing
+# would require the dependencies to be installed before they can be declared).
+with io.open(path.join(here, 'pizzapy', '__init__.py'), encoding='utf-8') as f:
+    version = re.search(r"^__version__ = '([^']+)'", f.read(), re.M).group(1)
 
 
 class PublishCommand(Command):
@@ -64,10 +70,10 @@ class PublishCommand(Command):
 setup(
     name='pizzapy',
 
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
+    # Versions comply with PEP440, and are single-sourced from
+    # pizzapy/__init__.py. See
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.2',
+    version=version,
 
     description='A Python wrapper for the Dominos Pizza API',
     long_description=long_description,
@@ -96,49 +102,48 @@ setup(
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
 
-        # TODO: Add testing/support for more python versions
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
+        # Tested against each of these in CI (see .github/workflows/tests.yml).
         'Programming Language :: Python',
-        # 'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        # 'Programming Language :: Python :: 3',
-        # 'Programming Language :: Python :: 3.3',
-        # 'Programming Language :: Python :: 3.4',
-        # 'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
+    python_requires='>=3.6',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(exclude=['tests']),
 
-    # TODO: Add a command line tool
-    # To provide executable scripts, use entry points in preference to the
-    # "scripts" keyword. Entry points provide cross-platform support and allow
-    # pip to create the appropriate form of executable for the target platform.
-    # entry_points={
-    #     'console_scripts': [
-    #         'pizzapy=pizzapy:main'
-    #     ],
-    # },
+    # A read-only command line tool for finding stores and reading menus.
+    entry_points={
+        'console_scripts': [
+            'pizzapy=pizzapy.cli:main'
+        ],
+    },
 
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
+    # Only what the library itself imports. pyhamcrest used to be listed
+    # here, so every user installed a test assertion library.
     install_requires=[
-        'pyhamcrest',
-        'requests', 
+        'requests',
         'xmltodict',
     ],
     include_package_data=True,
-    tests_require=[
-        'mock',
-        'pytest',
-    ],
+    extras_require={
+        'test': [
+            'mock',
+            'pyhamcrest',
+            'pytest',
+        ],
+    },
 
     # setup.py publish support.
     cmdclass={
